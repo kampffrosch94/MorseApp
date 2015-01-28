@@ -22,15 +22,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="11dp"
+        android:onClick="switchActivity"
         android:text="@string/button_text" />
-
-    <SurfaceView
-        android:id="@+id/surfaceView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="166dp" />
 
      <Button
          android:id="@+id/cancel_button"

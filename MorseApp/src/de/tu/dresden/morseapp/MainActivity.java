@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -80,4 +81,10 @@ public class MainActivity extends Activity
     		worker.cancel(true);
     	}
     }
+    
+	public void switchActivity(View view) {
+		cancelSending(view);
+		Intent intent = new Intent(getApplicationContext(), ReceiveActivity.class);
+		startActivity(intent);
+	}
 }
