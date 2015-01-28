@@ -4,7 +4,11 @@ import java.io.IOException;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
@@ -29,6 +33,7 @@ public class ReceiveActivity extends Activity {
 		public void onPictureTaken(byte[] data, Camera camera) {
 
 			Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+			bitmap = toGrayscale(bitmap);
 			if (bitmap == null) {
 				Toast.makeText(getApplicationContext(), "No Picture taken.",
 						Toast.LENGTH_SHORT).show();
@@ -52,6 +57,7 @@ public class ReceiveActivity extends Activity {
 		setContentView(R.layout.activity_receive);
 		pic = (ImageView) findViewById(R.id.imageView1);
 		cameraObject = Camera.open();
+		cameraObject.setDisplayOrientation(90);
 		showCamera = new ShowCamera(this, cameraObject);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(showCamera);
@@ -97,5 +103,22 @@ public class ReceiveActivity extends Activity {
 
 		return false;
 
+	}
+
+	public Bitmap toGrayscale(Bitmap bmpOriginal) {
+		int width, height;
+		height = bmpOriginal.getHeight();
+		width = bmpOriginal.getWidth();
+
+		Bitmap bmpGrayscale = Bitmap.createBitmap(width, height,
+				Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(bmpGrayscale);
+		Paint paint = new Paint();
+		ColorMatrix cm = new ColorMatrix();
+		cm.setSaturation(0);
+		ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+		paint.setColorFilter(f);
+		c.drawBitmap(bmpOriginal, 0, 0, paint);
+		return bmpGrayscale;
 	}
 }
