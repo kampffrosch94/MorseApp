@@ -1,6 +1,7 @@
 package de.tu.dresden.morseapp;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -55,6 +56,8 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	{
 		for(String code : morse)
 		{
+			Log.d("DEBUG", code);
+
 			for(char c : code.toCharArray())
 			{
 				if(c == '.')
@@ -70,7 +73,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 				    currentTime = System.currentTimeMillis();
 					continue;
 				}
-				if(c == '-')
+				if(c == '_')
 				{
 					//DEBUG
 					Log.d("DEBUG", "dash");
@@ -88,11 +91,12 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 					//DEBUG
 					Log.d("DEBUG", "end of word");
 					//DEBUG
-					elapseTime(interword_pause);
+					elapseTime(interword_pause - dah);
 					continue;
 				}
 				
 			}
+			elapseTime(dah);
 		}
 	}
 
