@@ -26,6 +26,9 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	private long currentTime;
 	private static Semaphore sema  = new Semaphore(1);
 	
+	private static final String debugLabel = "MorseSendingDebug";
+	private static final String MorseSendingError = "MorseSendingDebug";
+	
 	public static int dit = 600;
 	public static int dah = 3 * dit;
 	public static int pause = dit;
@@ -47,8 +50,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		for(String word : words)
 		{
 			sendByFlash(translator.stringToMorse(word));
-		}
-		
+		}		
 		return true;
 	}
 
@@ -56,17 +58,19 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	{
 		for(String code : morse)
 		{
-			Log.d("DEBUG", code);
+			Log.d(debugLabel, code);
 
 			for(char c : code.toCharArray())
 			{
 				if(c == '.')
 				{
 					//DEBUG
-					Log.d("DEBUG", "punkt");
+					Log.d(debugLabel, "punkt");
 					//DEBUG
-					while(System.currentTimeMillis() - currentTime < pause)
-						;
+					//while(System.currentTimeMillis() - currentTime < pause)
+					//	;
+					if((pause - (System.currentTimeMillis() - currentTime)) > 0 )
+						elapseTime((pause - (System.currentTimeMillis() - currentTime)));
 					flashOn();
 					elapseTime(dit);
 				    flashOff();
@@ -76,10 +80,11 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 				if(c == '_')
 				{
 					//DEBUG
-					Log.d("DEBUG", "dash");
+					Log.d(debugLabel, "dash");
 					//DEBUG
-					while(System.currentTimeMillis() - currentTime < pause)
-						;
+					//while(System.currentTimeMillis() - currentTime < pause)
+					//	;
+					elapseTime(pause - (System.currentTimeMillis() - currentTime));
 					flashOn();
 					elapseTime(dah);
 					flashOff();
@@ -89,7 +94,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 				if(c == '/')
 				{
 					//DEBUG
-					Log.d("DEBUG", "end of word");
+					Log.d(debugLabel, "end of word");
 					//DEBUG
 					elapseTime(interword_pause - dah);
 					continue;
@@ -127,7 +132,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		catch(Exception ex)
 		{
 			//TODO handle camera not available; execution of onPreExcecute should stop here
-			Log.d("ERROR", "Camera not available");
+			Log.d(MorseSendingError, "Camera not available");
 			ex.printStackTrace();
 		}
 		
@@ -146,13 +151,8 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	{
 		super.onPostExecute(result);
 		
-		if(result)
-		{	
-			//cam.release();
-		}
 		try
 		{
-			//we do this to avoid sending another message too soon
 			Thread.sleep(interword_pause);
 		}
 		catch(InterruptedException ex)
@@ -168,10 +168,6 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	{
 		try
 		{
-			//Camera.Parameters p = cam.getParameters();
-			//p.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-			//cam.setParameters(p);
-			//cam.setPreviewTexture(new SurfaceTexture(0));
 			cam.autoFocus(null);
 		}
 		catch(Exception ex)
@@ -183,9 +179,6 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	{
 		try
 		{
-			//Camera.Parameters p = cam.getParameters();
-			//p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-			//cam.setParameters(p);
 			cam.cancelAutoFocus();		
 		}
 		catch(Exception ex)
@@ -194,12 +187,20 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		}
 	}
 	
-	private void elapseTime(int ms)
+	private void elapseTime(long ms)
 	{
-		//this is busy waiting, i know, but using interrupts is less precise
+		/*
 		long startTime = System.currentTimeMillis();
 		long elapsed = 0;
 		while(elapsed < ms)
 			elapsed = System.currentTimeMillis() - startTime;
+		*/
+		try
+		{
+			Thread.sleep(ms, 1000);
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
