@@ -2,18 +2,24 @@ package de.tu.dresden.morseapp;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 
-//yo
+public class MainActivity extends Activity
+{
 
-public class MainActivity extends Activity {
-
+	private EditText inputField;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        inputField = (EditText) findViewById(R.id.string_input_field);
     }
 
 
@@ -34,5 +40,30 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    
+    @Override
+    protected void onResume()
+    {
+    	// TODO Auto-generated method stub
+    	super.onResume();
+    }
+    
+    @Override
+    protected void onPause()
+    {
+    	// TODO Auto-generated method stub
+    	super.onPause();
+    }
+    
+    public void dispatchMorse(View view)
+    {
+    	String stringToSend = inputField.getText().toString();
+    	
+    	//DEBUG
+    	Log.d("DEBUG", "input string was \"" + stringToSend + "\"");
+    	//DEBUG
+    	
+    	new MorseSendingWorker(getApplicationContext()).execute(stringToSend);
     }
 }

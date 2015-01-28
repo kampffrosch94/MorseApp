@@ -7,7 +7,9 @@ import java.util.LinkedList;
 
 //for basics of the morse code see: http://de.wikipedia.org/wiki/Morsezeichen
 public class MorseTranslator {
-    private Node root;
+    
+	public static MorseTranslator instance; 
+	private Node root;
 
     private class Node{
 
@@ -41,7 +43,14 @@ public class MorseTranslator {
 
     }
 
-    public MorseTranslator() {
+    public static MorseTranslator getInstance()
+    {
+    	if (instance == null)
+    		instance = new MorseTranslator();
+    	return instance;
+    }
+    
+    private MorseTranslator() {
         initDecodeTree();
     }
 

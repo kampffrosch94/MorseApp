@@ -4,5 +4,8 @@
     <string name="app_name">Morse App</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
+    <string name="permdesc_flashlight">Berechtigung das Blitzlicht zu nutzen</string>
+    <string name="permlab_flashlight">Blitzlicht</string>
+    <string name="flash_feature_not_available">Blitz kann nicht von der Anwendung genutzt werden</string>
+	<string name="dispatch_button_text">Senden</string>
 </resources>
