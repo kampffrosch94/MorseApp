@@ -56,7 +56,7 @@ public class ReceiveActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_receive);
 		pic = (ImageView) findViewById(R.id.imageView1);
 		cameraObject = isCameraAvailiable();
 		showCamera = new ShowCamera(this, cameraObject);
