@@ -33,10 +33,10 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	private static final String debugLabel = "MorseSendingDebug";
 	private static final String MorseSendingError = "MorseSendingDebug";
 	
-	public static int dit = 600;
-	public static int dah = 3 * dit;
-	public static int pause = dit;
-	public static int interword_pause = 7*dit;
+	public static int dit = 600; //length of one point, defines all other values
+	public static int dah = 3 * dit; //length of one dash, length of pause between last symbol of a char and first symbol of next char
+	public static int pause = dit; //length of pause between 2 symbols of one char
+	public static int interword_pause = 7*dit; //length of pause between 2 whole words
 	
 	
 	

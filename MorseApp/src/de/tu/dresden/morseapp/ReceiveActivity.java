@@ -1,7 +1,5 @@
 package de.tu.dresden.morseapp;
 
-import java.io.IOException;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
