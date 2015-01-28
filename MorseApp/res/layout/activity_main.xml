@@ -32,14 +32,23 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="166dp" />
 
-    <Button
-        android:id="@+id/dispatch_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/string_input_field"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:onClick="dispatchMorse"
-        android:text="@string/dispatch_button_text" />
+     <Button
+         android:id="@+id/cancel_button"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/dispatch_button"
+         android:layout_centerHorizontal="true"
+         android:onClick="cancelSending"
+         android:text="@string/cancel_button_text" />
+
+     <Button
+         android:id="@+id/dispatch_button"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/string_input_field"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="23dp"
+         android:onClick="dispatchMorse"
+         android:text="@string/dispatch_button_text" />
 
 </RelativeLayout>

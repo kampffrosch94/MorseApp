@@ -182,7 +182,7 @@ public class MorseTranslator {
             case '_': return "..--.-";
             case '(': return "-.--.";
             case ')': return "-.--.-";
-            case 39: return ".----."; //for '
+            case '\'': return ".----."; 
             case '=': return "-...-";
             case '+': return ".-.-.";
             case '/': return "-..-.";

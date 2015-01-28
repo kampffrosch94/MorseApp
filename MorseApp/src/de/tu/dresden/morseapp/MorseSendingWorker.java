@@ -13,6 +13,10 @@ import android.util.Log;
 
 /**
  * @author redbreastbird
+ * 
+ * This was tested on Nexus 5 with Android 5.0.1 Lollipop.
+ * 
+ * TODO test on other devices and add check if this doesnt work there
  *
  */
 public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
@@ -59,6 +63,8 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 
 			for(char c : code.toCharArray())
 			{
+				if(isCancelled())
+					return;
 				if(c == '.')
 				{
 					Log.d(debugLabel, "point");
@@ -84,7 +90,8 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 				if(c == '/')
 				{
 					Log.d(debugLabel, "end of word");
-					elapseTime(interword_pause);
+					//we need this - dah, because we hard-wait 1 dah after every char
+					elapseTime(interword_pause - dah);
 					continue;
 				}
 				
@@ -109,7 +116,9 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		}
 		catch (InterruptedException e)
 		{
-			//continue execution;
+			/* continue execution
+			 * other string was already being send
+			 */
 		}
 		
 		try
@@ -144,6 +153,20 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		
 	}
 	
+	@Override
+	protected void onCancelled()
+	{
+		super.onCancelled();
+		if(cam != null)
+		{
+			cam.stopPreview();
+			cam.release();
+			sema.release();
+		}
+			
+		
+	}
+	
 	private void flashOn()
 	{
 		try
@@ -174,7 +197,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 			Thread.sleep(ms, 1000);
 		} catch (InterruptedException e)
 		{
-			e.printStackTrace();
+			Log.d(debugLabel, "Cancel was called");
 		}
 	}
 }

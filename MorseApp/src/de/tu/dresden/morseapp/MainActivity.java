@@ -1,5 +1,8 @@
 package de.tu.dresden.morseapp;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +15,9 @@ import android.widget.EditText;
 public class MainActivity extends Activity
 {
 
+	private static final String debugLabel = "MorseApp MainActivity Debug";
 	private EditText inputField;
+	private List<MorseSendingWorker> workers;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +25,7 @@ public class MainActivity extends Activity
         setContentView(R.layout.activity_main);
         
         inputField = (EditText) findViewById(R.id.string_input_field);
+        workers = new LinkedList<MorseSendingWorker>();
     }
 
 
@@ -60,10 +66,18 @@ public class MainActivity extends Activity
     {
     	String stringToSend = inputField.getText().toString();
     	
-    	//DEBUG
-    	Log.d("DEBUG", "input string was \"" + stringToSend + "\"");
-    	//DEBUG
+    	Log.d(debugLabel, "input string was \"" + stringToSend + "\"");
     	
-    	new MorseSendingWorker(getApplicationContext()).execute(stringToSend);
+    	workers.add(new MorseSendingWorker(getApplicationContext()));
+    	workers.get(workers.size() - 1).execute(stringToSend);
+    	
+    }
+    
+    public void cancelSending(View view)
+    {
+    	for(MorseSendingWorker worker : workers)
+    	{
+    		worker.cancel(true);
+    	}
     }
 }
