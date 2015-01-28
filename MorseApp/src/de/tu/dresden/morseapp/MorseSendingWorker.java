@@ -1,7 +1,5 @@
 package de.tu.dresden.morseapp;
 
-import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -9,7 +7,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -64,11 +61,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 			{
 				if(c == '.')
 				{
-					//DEBUG
-					Log.d(debugLabel, "punkt");
-					//DEBUG
-					//while(System.currentTimeMillis() - currentTime < pause)
-					//	;
+					Log.d(debugLabel, "point");
 					if((pause - (System.currentTimeMillis() - currentTime)) > 0 )
 						elapseTime((pause - (System.currentTimeMillis() - currentTime)));
 					flashOn();
@@ -79,11 +72,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 				}
 				if(c == '-')
 				{
-					//DEBUG
 					Log.d(debugLabel, "dash");
-					//DEBUG
-					//while(System.currentTimeMillis() - currentTime < pause)
-					//	;
 					if((pause - (System.currentTimeMillis() - currentTime)) > 0 )
 						elapseTime((pause - (System.currentTimeMillis() - currentTime)));
 					flashOn();
@@ -94,10 +83,8 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 				}
 				if(c == '/')
 				{
-					//DEBUG
 					Log.d(debugLabel, "end of word");
-					//DEBUG
-					elapseTime(interword_pause - dah);
+					elapseTime(interword_pause);
 					continue;
 				}
 				
@@ -122,7 +109,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		}
 		catch (InterruptedException e)
 		{
-			//continue exectuion;
+			//continue execution;
 		}
 		
 		try
@@ -132,7 +119,6 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		}
 		catch(Exception ex)
 		{
-			//TODO handle camera not available; execution of onPreExcecute should stop here
 			Log.d(MorseSendingError, "Camera not available");
 			ex.printStackTrace();
 		}
@@ -152,13 +138,6 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	{
 		super.onPostExecute(result);
 		
-		try
-		{
-			Thread.sleep(interword_pause);
-		}
-		catch(InterruptedException ex)
-		{	
-		}
 		cam.stopPreview();
 		cam.release();
 		sema.release();
@@ -190,12 +169,6 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	
 	private void elapseTime(long ms)
 	{
-		/*
-		long startTime = System.currentTimeMillis();
-		long elapsed = 0;
-		while(elapsed < ms)
-			elapsed = System.currentTimeMillis() - startTime;
-		*/
 		try
 		{
 			Thread.sleep(ms, 1000);
