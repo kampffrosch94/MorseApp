@@ -7,7 +7,9 @@ import java.util.LinkedList;
 
 //for basics of the morse code see: http://de.wikipedia.org/wiki/Morsezeichen
 public class MorseTranslator {
-    private Node root;
+    
+	public static MorseTranslator instance; 
+	private Node root;
 
     private class Node{
 
@@ -41,7 +43,14 @@ public class MorseTranslator {
 
     }
 
-    public MorseTranslator() {
+    public static MorseTranslator getInstance()
+    {
+    	if (instance == null)
+    		instance = new MorseTranslator();
+    	return instance;
+    }
+    
+    private MorseTranslator() {
         initDecodeTree();
     }
 
@@ -135,7 +144,7 @@ public class MorseTranslator {
             case 'I': return "..";
             case 'J': return ".---";
             case 'K': return "-.-";
-            case 'L': return "._..";
+            case 'L': return ".-..";
             case 'M': return "--";
             case 'N': return "-.";
             case 'O': return "---";
@@ -173,7 +182,7 @@ public class MorseTranslator {
             case '_': return "..--.-";
             case '(': return "-.--.";
             case ')': return "-.--.-";
-            case 39: return ".----."; //for '
+            case '\'': return ".----."; 
             case '=': return "-...-";
             case '+': return ".-.-.";
             case '/': return "-..-.";
