@@ -14,8 +14,11 @@ import android.util.Log;
 /**
  * @author redbreastbird
  * 
- * This was tested on Nexus 5 with Android 5.0.1 Lollipop.
- * 
+ * This was tested on:
+ * 		Nexus 5 with 5.0.1
+ * 		S4 mini with 4.2.2 
+ * 		S2 		with 4.4.4
+ *		 
  * TODO test on other devices and add check if this doesnt work there
  *
  */
@@ -171,6 +174,9 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	{
 		try
 		{
+			Camera.Parameters p = cam.getParameters();
+			p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+			cam.setParameters(p);
 			cam.autoFocus(null);
 		}
 		catch(Exception ex)
@@ -182,6 +188,9 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	{
 		try
 		{
+			Camera.Parameters p = cam.getParameters();
+			p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+			cam.setParameters(p);
 			cam.cancelAutoFocus();		
 		}
 		catch(Exception ex)
