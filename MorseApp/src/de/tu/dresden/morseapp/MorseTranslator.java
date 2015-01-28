@@ -144,7 +144,7 @@ public class MorseTranslator {
             case 'I': return "..";
             case 'J': return ".---";
             case 'K': return "-.-";
-            case 'L': return "._..";
+            case 'L': return ".-..";
             case 'M': return "--";
             case 'N': return "-.";
             case 'O': return "---";

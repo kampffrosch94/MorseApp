@@ -77,14 +77,15 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 				    currentTime = System.currentTimeMillis();
 					continue;
 				}
-				if(c == '_')
+				if(c == '-')
 				{
 					//DEBUG
 					Log.d(debugLabel, "dash");
 					//DEBUG
 					//while(System.currentTimeMillis() - currentTime < pause)
 					//	;
-					elapseTime(pause - (System.currentTimeMillis() - currentTime));
+					if((pause - (System.currentTimeMillis() - currentTime)) > 0 )
+						elapseTime((pause - (System.currentTimeMillis() - currentTime)));
 					flashOn();
 					elapseTime(dah);
 					flashOff();
