@@ -37,13 +37,13 @@ public class MainActivity extends Activity {
 
       Bitmap bitmap = BitmapFactory.decodeByteArray(data , 0, data .length);
       if(bitmap==null){
-         Toast.makeText(getApplicationContext(), "not taken", Toast.LENGTH_SHORT).show();
+         Toast.makeText(getApplicationContext(), "No Picture taken.", Toast.LENGTH_SHORT).show();
       }
       else
       {
-         Toast.makeText(getApplicationContext(), "taken", Toast.LENGTH_SHORT).show();    	
+         pic.setImageBitmap(bitmap);
       }
-      cameraObject.release();
+      cameraObject.startPreview();
    }
 };
 
