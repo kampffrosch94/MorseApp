@@ -1,5 +1,7 @@
 package de.tu.dresden.morseapp;
 
+import java.io.IOException;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -20,15 +22,6 @@ public class ReceiveActivity extends Activity {
 	private Camera cameraObject;
 	private ShowCamera showCamera;
 	private ImageView pic;
-
-	public static Camera isCameraAvailiable() {
-		Camera object = null;
-		try {
-			object = Camera.open();
-		} catch (Exception e) {
-		}
-		return object;
-	}
 
 	private PictureCallback capturedIt = new PictureCallback() {
 
@@ -58,10 +51,21 @@ public class ReceiveActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_receive);
 		pic = (ImageView) findViewById(R.id.imageView1);
-		cameraObject = isCameraAvailiable();
+		cameraObject = Camera.open();
 		showCamera = new ShowCamera(this, cameraObject);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(showCamera);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		cameraObject.release();
 	}
 
 	public void snapIt(View view) {
