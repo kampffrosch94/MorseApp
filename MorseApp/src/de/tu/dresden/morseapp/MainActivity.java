@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 
 
 public class MainActivity extends Activity
@@ -19,6 +21,8 @@ public class MainActivity extends Activity
 	private static final String debugLabel = "MorseApp MainActivity Debug";
 	private EditText inputField;
 	private List<MorseSendingWorker> workers;
+	private List<String> messages;
+	private ListView listViewForMessages;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,8 @@ public class MainActivity extends Activity
         
         inputField = (EditText) findViewById(R.id.string_input_field);
         workers = new LinkedList<MorseSendingWorker>();
+        messages = new LinkedList<String>();
+        listViewForMessages = (ListView) findViewById(R.id.MessageList);
     }
 
 
@@ -67,6 +73,7 @@ public class MainActivity extends Activity
     {
     	String stringToSend = inputField.getText().toString();
     	
+    	addMessage("Send: "+ stringToSend + '\n');
     	Log.d(debugLabel, "input string was \"" + stringToSend + "\"");
     	
     	workers.add(new MorseSendingWorker(getApplicationContext()));
@@ -86,5 +93,13 @@ public class MainActivity extends Activity
 		cancelSending(view);
 		Intent intent = new Intent(getApplicationContext(), ReceiveActivity.class);
 		startActivity(intent);
+	}
+	
+	private void addMessage(String s){
+		messages.add(s);
+		String[] listEmlements = messages.toArray(new String[messages.size()]);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, listEmlements);
+		listViewForMessages.setAdapter(adapter);
+	
 	}
 }

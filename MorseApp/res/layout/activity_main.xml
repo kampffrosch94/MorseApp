@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,7 +6,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="de.tu.dresden.morseapp.MainActivity" >
+    tools:context="de.tu.dresden.morseapp.MainActivity" 
+    android:orientation="vertical">
     
     <EditText
         android:id="@+id/string_input_field"
@@ -15,33 +16,49 @@
         android:text="@string/hello_world"
         />
 
-    <Button
+   	<LinearLayout 
+   	    android:layout_width="match_parent"
+   	    android:layout_height="wrap_content"
+   	    android:orientation="horizontal"
+   	    >
+
+   	  <Button
+         android:id="@+id/dispatch_button"
+         android:layout_width="120dp"
+         android:layout_height="wrap_content"
+         android:onClick="dispatchMorse"
+         android:text="@string/dispatch_button_text" 
+         android:layout_weight="1.0"
+         />
+   	  
+   	  <Button
+         android:id="@+id/cancel_button"
+         android:layout_width="120dp"
+         android:layout_height="wrap_content"
+         android:onClick="cancelSending"
+         android:text="@string/cancel_button_text" 
+         android:layout_weight="1.0"
+         />
+     </LinearLayout>
+   	    
+     <ListView 
+         android:id="@+id/MessageList"
+         android:layout_width="match_parent"
+         android:layout_height="0dip"
+         android:layout_weight="1"
+         >
+         
+         
+     </ListView>
+
+    
+     
+     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="11dp"
         android:onClick="switchActivity"
         android:text="@string/button_text" />
 
-     <Button
-         android:id="@+id/cancel_button"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_below="@+id/dispatch_button"
-         android:layout_centerHorizontal="true"
-         android:onClick="cancelSending"
-         android:text="@string/cancel_button_text" />
-
-     <Button
-         android:id="@+id/dispatch_button"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_below="@+id/string_input_field"
-         android:layout_centerHorizontal="true"
-         android:layout_marginTop="23dp"
-         android:onClick="dispatchMorse"
-         android:text="@string/dispatch_button_text" />
-
-</RelativeLayout>
+</LinearLayout>
