@@ -12,7 +12,8 @@ public class FlashDecoder
 	
 	/*
 	 * This is the main method which should be called to decode the times.
-	 * First Element of the parameter "times" must be the first time the flash is enabled
+	 * First Element of the parameter "times" must be the first time the flash is enabled. Also currently the string must contain at least 2 words
+	 * and 2 chars per word.
 	 */
 	public static LinkedList<String> decodeFlash(List<Long> times)
 	{
