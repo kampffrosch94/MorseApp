@@ -1,5 +1,6 @@
 package de.tu.dresden.morseapp;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -18,7 +19,7 @@ import android.util.Log;
  * 		Nexus 5 with 5.0.1
  * 		S4 mini with 4.2.2 
  * 		S2 		with 4.4.4
- *		 
+ *		
  * TODO test on other devices and add check if this doesnt work there
  *
  */
@@ -34,21 +35,27 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	private static final String debugLabel = "MorseSendingDebug";
 	private static final String MorseSendingError = "MorseSendingDebug";
 	
-	public static int dit = 600; //length of one point, defines all other values
-	public static int dah = 3 * dit; //length of one dash, length of pause between last symbol of a char and first symbol of next char
-	public static int pause = dit; //length of pause between 2 symbols of one char
-	public static int interword_pause = 7*dit; //length of pause between 2 whole words
+	private int dit; //length of one point, defines all other values
+	private int dah; //length of one dash, length of pause between last symbol of a char and first symbol of next char
+	private int pause; //length of pause between 2 symbols of one char
+	private int interword_pause; //length of pause between 2 whole words
 	
 	
 	
-	public MorseSendingWorker(Context context)
+	public MorseSendingWorker(Context context, int dit)
 	{
+		this.dit = dit;
+		this.dah = 3 * dit;
+		this.pause = dit;
+		this.interword_pause = 7*dit; 
 		this.context = context;
 	}
 	
 	@Override
 	protected Boolean doInBackground(String... words)
 	{
+		if(words.length < 2)
+			throw new RuntimeException("First word must be a boolean determining pauses between chars or not, second one must be the word to send");
 		
 		try
 		{
@@ -80,14 +87,16 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		if(cam == null)
 			return false;
 		
-		for(String word : words)
+		//send all strings except for the first, which must be a boolean determining pauses between chars or not
+		String[] words2 = Arrays.copyOfRange(words, 1, words.length);
+		for(String word : words2)
 		{
-			sendByFlash(translator.stringToMorse(word));
+			sendByFlash(translator.stringToMorse(word), Boolean.parseBoolean(words[0]));
 		}		
 		return true;
 	}
 
-	private void sendByFlash(List<String> morse)	
+	private void sendByFlash(List<String> morse, boolean withBreaksbetweenChars)	
 	{
 		for(String code : morse)
 		{
@@ -128,7 +137,8 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 				}
 				
 			}
-			elapseTime(dah);
+			if(!withBreaksbetweenChars) 
+				elapseTime(dah);
 		}
 	}
 

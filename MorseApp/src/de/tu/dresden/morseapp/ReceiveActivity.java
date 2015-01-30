@@ -37,6 +37,7 @@ public class ReceiveActivity extends Activity {
 	private ImageView pic;
 	private CameraHandlerThread mThread = null;
 	private Handler activityHandler;
+	LinkedList<Long> signalTimeList = null;
 
 	private static final String debugLabel = "MorseReceiverDebug";
 
@@ -197,8 +198,7 @@ public class ReceiveActivity extends Activity {
 			cameraObject.startPreview();
 		}
 	};
-	
-	LinkedList<Long> signalTimeList = null;
+
 	public void handleList(long start,long end){
 		Log.d("Signaltime", "Start : " + Long.toString(start) + "  End:  " + Long.toString(end));
 		if(signalTimeList == null){
@@ -226,6 +226,10 @@ public class ReceiveActivity extends Activity {
 			handleList(signalChangeTime, currentTime);
 			signalChangeTime = currentTime;
 		}
+		
+		//decode all sub results (for debugging reasons)
+		for(String s : FlashDecoder.decodeFlash(signalTimeList))
+			Log.d(debugLabel, s);
 	}
 	
 	

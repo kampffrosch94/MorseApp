@@ -12,5 +12,6 @@
     <string name="dispatch_button_text">Senden</string>
     <string name="cancel_button_text">Abbrechen</string>
     <string name="title_activity_receive">ReceiveActivity</string>
+    <string name="pausesBetweenCharsText">keine Pausen zwischen Zeichen</string>
 
 </resources>

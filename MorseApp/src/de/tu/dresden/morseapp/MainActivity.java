@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -20,6 +21,7 @@ public class MainActivity extends Activity
 
 	private static final String debugLabel = "MorseApp MainActivity Debug";
 	private EditText inputField;
+	private CheckBox pausesBetweenChars;
 	private List<MorseSendingWorker> workers;
 	private List<String> messages;
 	private ListView listViewForMessages;
@@ -33,6 +35,7 @@ public class MainActivity extends Activity
         workers = new LinkedList<MorseSendingWorker>();
         messages = new LinkedList<String>();
         listViewForMessages = (ListView) findViewById(R.id.MessageList);
+        pausesBetweenChars = (CheckBox) findViewById(R.id.pausesBetweenChars);
     }
 
 
@@ -71,13 +74,14 @@ public class MainActivity extends Activity
     
     public void dispatchMorse(View view)
     {
+    	boolean pauses = pausesBetweenChars.isChecked();
     	String stringToSend = inputField.getText().toString();
     	
     	addMessage("Send: "+ stringToSend + '\n');
     	Log.d(debugLabel, "input string was \"" + stringToSend + "\"");
     	
-    	workers.add(new MorseSendingWorker(getApplicationContext()));
-    	workers.get(workers.size() - 1).execute(stringToSend);
+    	workers.add(new MorseSendingWorker(getApplicationContext(), 600));
+    	workers.get(workers.size() - 1).execute(""+ pauses, stringToSend);
     	
     }
     

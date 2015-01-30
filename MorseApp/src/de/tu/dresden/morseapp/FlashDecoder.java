@@ -1,5 +1,10 @@
 package de.tu.dresden.morseapp;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StreamCorruptedException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,12 +13,15 @@ import android.util.Log;
 public class FlashDecoder
 {
 	private static final String debugLabel = "FlashDecoder Debug";
+	private static long dit;
 	private static final float tolerance = 0.1F;
 	
 	/*
 	 * This is the main method which should be called to decode the times.
 	 * First Element of the parameter "times" must be the first time the flash is enabled. Also currently the string must contain at least 2 words
 	 * and 2 chars per word.
+	 * 
+	 * TODO add a calibration mode, so that the restrictions above are no longer needed (calibration is standard for morse)
 	 */
 	public static LinkedList<String> decodeFlash(List<Long> times)
 	{
@@ -98,6 +106,77 @@ public class FlashDecoder
 			}
 		}
 		return result;
+	}
+	
+	/*
+	 * This calibrates the FlashDecoder to read morse.
+	 * By convention, the first time send through the stream must mark a "flash on",
+	 * To calibrate morse, first a "KA" must be send, following by "Paris".
+	 * Calibration must be started while KA is being send and cover at least one point and one dash. Between "KA" and "Paris" must be the regular morse break between words (7*dit)
+	 */
+	public static void calibrate(InputStream inStream)
+	{
+		long temporaryDit = 0;
+		long timeLastOff = 0;
+		long timeOn = 0;
+		long timeOff = 0;
+		boolean KAsend = false;
+		boolean rebasedDitTime = false;
+
+		reading:
+		while(true)
+		{
+			try
+			{
+				if(timeOn == 0)
+				{
+					timeOn = (long) inStream.read();
+				}
+				else
+				{
+					timeLastOff = timeOff;
+					timeOff = (long) inStream.read();
+				}
+			}
+			catch (IOException e)
+			{
+				break reading;
+			}
+			
+			//this will be true as long as not the entire KA including the break after KA is send
+			if(KAsend == false)
+			{
+				long newDit = timeOff - timeOn;
+				
+				if(rebasedDitTime)
+				{
+					if(timeLastOff - timeOn > (7*temporaryDit) * (1-tolerance) && timeLastOff - timeOn < (7*temporaryDit) * (1+tolerance))
+						KAsend = true;
+					continue reading;
+				} 
+				if(temporaryDit == 0)
+				{
+					temporaryDit = newDit;
+					continue reading;
+				}
+				if(temporaryDit * (1+tolerance) > newDit && temporaryDit * (1-tolerance) > newDit)
+				{
+					temporaryDit = newDit;
+				}
+				//we will reach this the second time
+				rebasedDitTime = true;
+
+			}
+			else
+			{
+				//start reading "Paris". because this is always the same, we dont need to read and sanity check. however if paris is not send at this time, calibration will fail
+				
+			}
+				
+				
+		}		
+		
+		
 	}
 	
 }
