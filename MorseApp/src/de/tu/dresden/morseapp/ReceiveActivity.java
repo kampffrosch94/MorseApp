@@ -6,9 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.ImageFormat;
 import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -40,9 +42,15 @@ public class ReceiveActivity extends Activity {
 		pic = (ImageView) findViewById(R.id.imageView1);
 		openCamera();
 		
+		
 		Camera.Parameters para = cameraObject.getParameters();
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
+		para.setPreviewFormat(ImageFormat.NV21);
 		cameraObject.setParameters(para);
+		
+		
+		
+		cameraObject.setPreviewCallback(previewCb);
 		
 		cameraObject.setDisplayOrientation(90);
 		showCamera = new ShowCamera(this, cameraObject);
@@ -179,5 +187,48 @@ public class ReceiveActivity extends Activity {
 			}
 			cameraObject.startPreview();
 		}
+	};
+	
+	
+	public void handleList(long start,long end){
+		Log.d("Signaltime", "Start : " + Long.toString(start) + "  End:  " + Long.toString(end));
+	}
+	
+	
+	private boolean started = false;
+	private boolean signalLast = false; // state of the previous signal 
+	private long signalChangeTime;
+	
+	public void handleTick(boolean signal){
+		if(!started && signal){
+			started = true;
+			signalLast = true;
+			signalChangeTime = System.currentTimeMillis();
+		}
+		
+		if((signalLast != signal) && started){
+			signalLast = signal;
+			long currentTime = System.currentTimeMillis();
+			handleList(signalChangeTime, currentTime);
+			signalChangeTime = currentTime;
+		}
+	}
+	
+	
+	private PreviewCallback previewCb = new PreviewCallback() {
+
+		@Override
+		public void onPreviewFrame(byte[] data, Camera camera) {
+			// TODO Auto-generated method stub
+			Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+			if (bitmap == null) {
+				Log.d(debugLabel, "No Picture taken.");
+			} else {
+				bitmap = toGrayscale(bitmap);
+				handleTick(hasSignal(bitmap));
+				Log.d(debugLabel, "Picture taken.");
+			}
+		}
+
 	};
 }
