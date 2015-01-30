@@ -1,6 +1,12 @@
 package de.tu.dresden.morseapp;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
 import android.graphics.Bitmap;
@@ -38,6 +44,7 @@ public class ReceiveActivity extends Activity {
 	private CameraHandlerThread mThread = null;
 	private Handler activityHandler;
 	LinkedList<Long> signalTimeList = null;
+	//OutputStream streamToFlashDecoder = null;
 
 	private static final String debugLabel = "MorseReceiverDebug";
 
@@ -55,12 +62,12 @@ public class ReceiveActivity extends Activity {
 		//para.setPreviewFormat(ImageFormat.YV12);
 		cameraObject.setParameters(para);
 		
+		//streamToFlashDecoder = new ByteArrayOutputStream(FlashDecoder.buff);
+
 		
-		
-		
-		
-		cameraObject.setDisplayOrientation(90);
-		showCamera = new ShowCamera(this, cameraObject);
+		//FlashDecoder fc = new FlashDecoder();
+				
+		//fc.calibrate(new ByteArrayInputStream(FlashDecoder.buff)); 
 		
 		cameraObject.setPreviewCallback(previewCb);
 		
@@ -83,6 +90,20 @@ public class ReceiveActivity extends Activity {
 		cameraObject.takePicture(null, null, capturedIt);
 	}
 
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		/*try
+		{
+			streamToFlashDecoder.close();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -200,12 +221,24 @@ public class ReceiveActivity extends Activity {
 	};
 
 	public void handleList(long start,long end){
+		byte[] buff = null;
 		Log.d("Signaltime", "Start : " + Long.toString(start) + "  End:  " + Long.toString(end));
 		if(signalTimeList == null){
 			signalTimeList = new LinkedList<Long>();
 			signalTimeList.add(start);
+			buff = ByteBuffer.allocate(8).putLong(start).array();
+			
 		}
 		signalTimeList.add(end);
+		
+	/*	try
+	//	{
+		//	streamToFlashDecoder.write(buff);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		*/
 	}
 	
 	
@@ -227,9 +260,6 @@ public class ReceiveActivity extends Activity {
 			signalChangeTime = currentTime;
 		}
 		
-		//decode all sub results (for debugging reasons)
-		for(String s : FlashDecoder.decodeFlash(signalTimeList))
-			Log.d(debugLabel, s);
 	}
 	
 	

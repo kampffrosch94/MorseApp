@@ -1,5 +1,6 @@
 package de.tu.dresden.morseapp;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ public class FlashDecoder
 	private static final String debugLabel = "FlashDecoder Debug";
 	private static long dit;
 	private static final float tolerance = 0.1F;
+	//static final ByteArrayOutputStream buff = ByteArrayOutputStream;
 	
 	/*
 	 * This is the main method which should be called to decode the times.
@@ -112,7 +114,7 @@ public class FlashDecoder
 	 * Calibration must be started while KA is being send and cover at least one point and one dash. Between "KA" and "Paris" must be the regular morse break between words (7*dit)
 	 */
 	public static void calibrate(InputStream inStream)
-	{
+	{		
 		long temporaryDit = 0;
 		long timeLastOff = 0;
 		long timeOn = 0;
@@ -143,6 +145,7 @@ public class FlashDecoder
 			}
 			catch (IOException e)
 			{
+				Log.d(debugLabel, "konnte nicht lesen");
 				break reading;
 			}
 			

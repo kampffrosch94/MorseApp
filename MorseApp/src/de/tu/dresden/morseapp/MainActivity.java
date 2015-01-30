@@ -30,7 +30,7 @@ public class MainActivity extends Activity implements
 	private List<String> messages;
 	private ListView listViewForMessages;
 	static Dialog dialog_freuquenz;
-	public static int freuquenz;
+	public static int frequency;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements
 		messages = new LinkedList<String>();
 		listViewForMessages = (ListView) findViewById(R.id.MessageList);
 		pausesBetweenChars = (CheckBox) findViewById(R.id.pausesBetweenChars);
-		freuquenz = 600;
+		frequency = 600;
 	}
 
 	@Override
@@ -70,14 +70,14 @@ public class MainActivity extends Activity implements
 					.findViewById(R.id.NumberPickerFrequenz);
 			np.setMaxValue(1200);
 			np.setMinValue(60);
-			np.setValue(freuquenz);
+			np.setValue(frequency);
 			np.setWrapSelectorWheel(false);
 			np.setOnValueChangedListener(this);
 			b1.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					freuquenz = np.getValue();
+					frequency = np.getValue();
 					// addMessage(new Integer((int) freuquenz).toString());
 					dialog_freuquenz.dismiss();
 				}
@@ -124,7 +124,7 @@ public class MainActivity extends Activity implements
 		addMessage("Send: " + stringToSend + '\n');
 		Log.d(debugLabel, "input string was \"" + stringToSend + "\"");
 
-		workers.add(new MorseSendingWorker(getApplicationContext(), 600));
+		workers.add(new MorseSendingWorker(getApplicationContext(), frequency));
 		workers.get(workers.size() - 1).execute("" + pauses, stringToSend);
 
 	}

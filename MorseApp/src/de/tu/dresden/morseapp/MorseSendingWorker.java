@@ -60,6 +60,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		try
 		{
 			sema.acquire();
+			hasSema = true;
 		}
 		catch (InterruptedException e)
 		{

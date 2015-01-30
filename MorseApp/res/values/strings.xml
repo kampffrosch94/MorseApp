@@ -14,5 +14,6 @@
     <string name="title_activity_receive">ReceiveActivity</string>
     <string name="stringcancel">cancel</string>
     <string name="stringset">set</string>
+    <string name="pausesBetweenCharsText">keine Pause zwischen Zeichen</string>
 
 </resources>
