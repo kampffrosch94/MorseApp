@@ -1,6 +1,7 @@
 package de.tu.dresden.morseapp;
 
 import java.io.ByteArrayOutputStream;
+import java.util.LinkedList;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -197,9 +198,14 @@ public class ReceiveActivity extends Activity {
 		}
 	};
 	
-	
+	LinkedList<Long> signalTimeList = null;
 	public void handleList(long start,long end){
 		Log.d("Signaltime", "Start : " + Long.toString(start) + "  End:  " + Long.toString(end));
+		if(signalTimeList == null){
+			signalTimeList = new LinkedList<Long>();
+			signalTimeList.add(start);
+		}
+		signalTimeList.add(end);
 	}
 	
 	
