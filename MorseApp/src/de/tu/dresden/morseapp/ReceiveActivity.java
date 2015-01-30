@@ -39,6 +39,11 @@ public class ReceiveActivity extends Activity {
 		setContentView(R.layout.activity_receive);
 		pic = (ImageView) findViewById(R.id.imageView1);
 		openCamera();
+		
+		Camera.Parameters para = cameraObject.getParameters();
+		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
+		cameraObject.setParameters(para);
+		
 		cameraObject.setDisplayOrientation(90);
 		showCamera = new ShowCamera(this, cameraObject);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -154,8 +159,8 @@ public class ReceiveActivity extends Activity {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				Log.d(debugLabel, "Wait for Camera was interrupted"); 
-				//Waiting should be interrupted
+				Log.d(debugLabel, "Wait for Camera was interrupted");
+				// Waiting should be interrupted
 			}
 		}
 	}
@@ -170,7 +175,7 @@ public class ReceiveActivity extends Activity {
 			if (bitmap == null) {
 				Log.d(debugLabel, "No Picture taken.");
 			} else {
-				handleSignal(bitmap,hasSignal(bitmap));
+				handleSignal(bitmap, hasSignal(bitmap));
 			}
 			cameraObject.startPreview();
 		}
