@@ -1,10 +1,7 @@
 package de.tu.dresden.morseapp;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StreamCorruptedException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,7 +16,7 @@ public class FlashDecoder
 	/*
 	 * This is the main method which should be called to decode the times.
 	 * First Element of the parameter "times" must be the first time the flash is enabled. Also currently the string must contain at least 2 words
-	 * and 2 chars per word.
+	 * and 2 chars per word, and also at least one dash per char.
 	 * 
 	 * TODO add a calibration mode, so that the restrictions above are no longer needed (calibration is standard for morse)
 	 */
@@ -126,11 +123,17 @@ public class FlashDecoder
 		reading:
 		while(true)
 		{
+			if(timeOn != 0 && timeOff != 0)
+			{
+				timeOn = 0;
+				timeOff = 0;
+			}
 			try
 			{
 				if(timeOn == 0)
 				{
 					timeOn = (long) inStream.read();
+					continue reading;
 				}
 				else
 				{
@@ -147,7 +150,7 @@ public class FlashDecoder
 			if(KAsend == false)
 			{
 				long newDit = timeOff - timeOn;
-				
+			
 				if(rebasedDitTime)
 				{
 					if(timeLastOff - timeOn > (7*temporaryDit) * (1-tolerance) && timeLastOff - timeOn < (7*temporaryDit) * (1+tolerance))
@@ -169,7 +172,22 @@ public class FlashDecoder
 			}
 			else
 			{
+				long accumulatedDitTimes = 0;
+				int totalDitsRead = 0;
 				//start reading "Paris". because this is always the same, we dont need to read and sanity check. however if paris is not send at this time, calibration will fail
+				//'P' -..- 2 + 3 = 5 dits
+				//'A' .- 1 + 2 = 3 dits
+				//'R' .-. 2 + 2 = 4 dits
+				//'I' .. 2 dits
+				//'S' ... 3 dits
+				int ditsPerParis = (5+3+4+2+3);
+				while(totalDitsRead < ditsPerParis)
+				{
+					accumulatedDitTimes += timeOn - timeOff;
+				}
+				Log.d(debugLabel, "berechnete dit länge: " + dit);
+				dit = accumulatedDitTimes / ditsPerParis;
+				
 				
 			}
 				
