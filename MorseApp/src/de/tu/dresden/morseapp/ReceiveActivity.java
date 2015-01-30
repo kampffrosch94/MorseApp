@@ -1,5 +1,7 @@
 package de.tu.dresden.morseapp;
 
+import java.io.ByteArrayOutputStream;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -8,9 +10,12 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.ImageFormat;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.PreviewCallback;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -45,15 +50,18 @@ public class ReceiveActivity extends Activity {
 		
 		Camera.Parameters para = cameraObject.getParameters();
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
-		para.setPreviewFormat(ImageFormat.NV21);
+		//para.setPreviewFormat(ImageFormat.YV12);
 		cameraObject.setParameters(para);
 		
 		
 		
-		cameraObject.setPreviewCallback(previewCb);
+		
 		
 		cameraObject.setDisplayOrientation(90);
 		showCamera = new ShowCamera(this, cameraObject);
+		
+		cameraObject.setPreviewCallback(previewCb);
+		
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(showCamera);
 	}
@@ -219,14 +227,24 @@ public class ReceiveActivity extends Activity {
 
 		@Override
 		public void onPreviewFrame(byte[] data, Camera camera) {
-			// TODO Auto-generated method stub
-			Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+			
+			// Convert to JPG
+			Size previewSize = camera.getParameters().getPreviewSize(); 
+			YuvImage yuvimage=new YuvImage(data, ImageFormat.NV21, previewSize.width, previewSize.height, null);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width, previewSize.height), 80, baos);
+			byte[] jdata = baos.toByteArray();
+
+			// Convert to Bitmap
+			Bitmap bitmap = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
+			
+			
 			if (bitmap == null) {
-				Log.d(debugLabel, "No Picture taken.");
+				Log.d(debugLabel, "No Picture decoded.");
 			} else {
 				bitmap = toGrayscale(bitmap);
 				handleTick(hasSignal(bitmap));
-				Log.d(debugLabel, "Picture taken.");
+				Log.d(debugLabel, "Picture decoded.");
 			}
 		}
 
