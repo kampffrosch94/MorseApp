@@ -29,6 +29,7 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	private Camera cam;
 	private long currentTime;
 	private static Semaphore sema  = new Semaphore(1);
+	private boolean hasSema = false;
 	
 	private static final String debugLabel = "MorseSendingDebug";
 	private static final String MorseSendingError = "MorseSendingDebug";
@@ -48,6 +49,34 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 	@Override
 	protected Boolean doInBackground(String... words)
 	{
+		
+		try
+		{
+			sema.acquire();
+		}
+		catch (InterruptedException e)
+		{
+			/* continue execution
+			 * other string was already being send
+			 */
+		}
+		
+		try
+		{
+			cam = Camera.open();
+			cam.setPreviewTexture(new SurfaceTexture(0));
+		}
+		catch(Exception ex)
+		{
+			Log.d(MorseSendingError, "Camera not available");
+			ex.printStackTrace();
+		}
+		
+		Camera.Parameters p = cam.getParameters();
+		p.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+		cam.setParameters(p);
+		cam.startPreview();
+		
 		if(cam == null)
 			return false;
 		
@@ -113,34 +142,6 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 			throw new RuntimeException(context.getString(R.string.flash_feature_not_available));
 		}
 		
-		try
-		{
-			sema.acquire();
-		}
-		catch (InterruptedException e)
-		{
-			/* continue execution
-			 * other string was already being send
-			 */
-		}
-		
-		try
-		{
-			cam = Camera.open();
-			cam.setPreviewTexture(new SurfaceTexture(0));
-		}
-		catch(Exception ex)
-		{
-			Log.d(MorseSendingError, "Camera not available");
-			ex.printStackTrace();
-		}
-		
-		assert cam != null; 
-		
-		Camera.Parameters p = cam.getParameters();
-		p.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-		cam.setParameters(p);
-		cam.startPreview();
 		currentTime = System.currentTimeMillis();
 		
 	}
@@ -164,7 +165,8 @@ public class MorseSendingWorker extends AsyncTask<String, Object, Boolean>
 		{
 			cam.stopPreview();
 			cam.release();
-			sema.release();
+			if(hasSema)
+				sema.release();
 		}
 			
 		
