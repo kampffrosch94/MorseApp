@@ -4,18 +4,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.NumberPicker;
+import android.widget.TextView;
 
 
-public class MainActivity extends Activity
+public class MainActivity extends Activity implements NumberPicker.OnValueChangeListener
 {
 
 	private static final String debugLabel = "MorseApp MainActivity Debug";
@@ -23,6 +28,8 @@ public class MainActivity extends Activity
 	private List<MorseSendingWorker> workers;
 	private List<String> messages;
 	private ListView listViewForMessages;
+	static Dialog dialog_freuquenz;
+	public static int freuquenz;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,8 @@ public class MainActivity extends Activity
         workers = new LinkedList<MorseSendingWorker>();
         messages = new LinkedList<String>();
         listViewForMessages = (ListView) findViewById(R.id.MessageList);
+        freuquenz = 600;
+        
     }
 
 
@@ -50,10 +59,47 @@ public class MainActivity extends Activity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            final Dialog dialog_freuquenz = new Dialog(MainActivity.this);
+            dialog_freuquenz.setTitle("Insert new Frequenz in ms. Range: 60-1200");
+            dialog_freuquenz.setContentView(R.layout.get_frequenz);
+            Button b1 = (Button) dialog_freuquenz.findViewById(R.id.FrequenzOk);
+            Button b2 = (Button) dialog_freuquenz.findViewById(R.id.FrequenzCancel);
+            final NumberPicker np = (NumberPicker) dialog_freuquenz.findViewById(R.id.NumberPickerFrequenz);
+            np.setMaxValue(1200);
+            np.setMinValue(60);
+            np.setValue(freuquenz);
+            np.setWrapSelectorWheel(false);
+            np.setOnValueChangedListener(this);
+            b1.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					freuquenz = np.getValue();
+					//addMessage(new Integer((int) freuquenz).toString());
+					dialog_freuquenz.dismiss();
+				}
+			});
+            b2.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					dialog_freuquenz.dismiss();
+					
+				}
+			});
+           dialog_freuquenz.show(); 
+            
+        	
+        	return true;
         }
         return super.onOptionsItemSelected(item);
     }
+    
+    @Override
+	public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+		// TODO Auto-generated method stub
+		
+	}
     
     @Override
     protected void onResume()
@@ -102,4 +148,7 @@ public class MainActivity extends Activity
 		listViewForMessages.setAdapter(adapter);
 	
 	}
+
+
+	
 }
