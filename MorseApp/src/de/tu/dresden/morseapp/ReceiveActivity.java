@@ -71,6 +71,7 @@ public class ReceiveActivity extends Activity {
 		
 		cameraObject.setPreviewCallback(previewCb);
 		
+		showCamera = new ShowCamera(this, cameraObject);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(showCamera);
 	}
