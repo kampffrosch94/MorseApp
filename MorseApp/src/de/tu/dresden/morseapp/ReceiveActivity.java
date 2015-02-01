@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
+import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -59,8 +60,18 @@ public class ReceiveActivity extends Activity {
 		
 		Camera.Parameters para = cameraObject.getParameters();
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
-		//para.setPreviewFormat(ImageFormat.YV12);
+		
+		List<Size> sizes = para.getSupportedPreviewSizes();
+		for (Size size : sizes) {
+		    Log.d("Sizes", "Available resolution: "+size.width+" "+size.height);
+		}
 		cameraObject.setParameters(para);
+		
+		List<Integer> rates = para.getSupportedPreviewFrameRates();
+		
+		for(Integer rate : rates){
+			Log.d("Rates","Framerate: " + rate.toString());
+		}
 		
 		//streamToFlashDecoder = new ByteArrayOutputStream(FlashDecoder.buff);
 
