@@ -180,7 +180,7 @@ public class ReceiveActivity extends Activity {
 				}
 			}
 
-			if (whitecount > baseLineWhiteCount + ScreenX * ScreenY * 0.1) {
+			if (whitecount > baseLineWhiteCount + ScreenX * ScreenY * 0.01) {
 				return true;
 			}
 
