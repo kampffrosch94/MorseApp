@@ -1,5 +1,6 @@
 package de.tu.dresden.morseapp;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by simeon on 24.01.15.
@@ -215,7 +216,7 @@ public class MorseTranslator {
     //you have to look, that every string is a letter
     //blanks between words have to represent, with a String with the value "/"
     //unknown letters will represented with a ?
-    public String morseToString(LinkedList<String> imputList)
+    public String morseToString(List<String> imputList)
     {
         String result = "";
         Node current_point = root;

@@ -1,15 +1,9 @@
 package de.tu.dresden.morseapp;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -45,7 +39,7 @@ public class ReceiveActivity extends Activity {
 	private CameraHandlerThread mThread = null;
 	private Handler activityHandler;
 	LinkedList<Long> signalTimeList = null;
-	//OutputStream streamToFlashDecoder = null;
+	// OutputStream streamToFlashDecoder = null;
 
 	private static final String debugLabel = "MorseReceiverDebug";
 
@@ -56,32 +50,35 @@ public class ReceiveActivity extends Activity {
 		setContentView(R.layout.activity_receive);
 		pic = (ImageView) findViewById(R.id.imageView1);
 		openCamera();
-		
-		
+
 		Camera.Parameters para = cameraObject.getParameters();
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
-		
+
 		List<Size> sizes = para.getSupportedPreviewSizes();
 		for (Size size : sizes) {
-		    Log.d("Sizes", "Available resolution: "+size.width+" "+size.height);
+			Log.d("CameraSettings", "Available resolution: " + size.width + " "
+					+ size.height);
 		}
 		cameraObject.setParameters(para);
-		
-		List<Integer> rates = para.getSupportedPreviewFrameRates();
-		
-		for(Integer rate : rates){
-			Log.d("Rates","Framerate: " + rate.toString());
-		}
-		
-		//streamToFlashDecoder = new ByteArrayOutputStream(FlashDecoder.buff);
 
-		
-		//FlashDecoder fc = new FlashDecoder();
-				
-		//fc.calibrate(new ByteArrayInputStream(FlashDecoder.buff)); 
-		
+		List<Integer> rates = para.getSupportedPreviewFrameRates();
+
+		for (Integer rate : rates) {
+			Log.d("CameraSettings", "Available framerate: " + rate.toString());
+		}
+
+		Size size = sizes.get(sizes.size() - 1);
+		para.setPreviewSize(size.width, size.height);
+		Log.d("CameraSettings", "Set resolution: " + size.width + " "
+				+ size.height);
+
+		if (sizes.contains(10)) {
+			para.setPreviewFrameRate(10);
+			Log.d("CameraSettings", "Set framerate: 10 per second");
+		}
+
 		cameraObject.setPreviewCallback(previewCb);
-		
+
 		showCamera = new ShowCamera(this, cameraObject);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(showCamera);
@@ -95,6 +92,7 @@ public class ReceiveActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mThread.suspend();
 		cameraObject.release();
 	}
 
@@ -103,19 +101,10 @@ public class ReceiveActivity extends Activity {
 	}
 
 	@Override
-	protected void onDestroy()
-	{
+	protected void onDestroy() {
 		super.onDestroy();
-		/*try
-		{
-			streamToFlashDecoder.close();
-		} catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -232,65 +221,53 @@ public class ReceiveActivity extends Activity {
 		}
 	};
 
-	public void handleList(long start,long end){
-		byte[] buff = null;
-		Log.d("Signaltime", "Start : " + Long.toString(start) + "  End:  " + Long.toString(end));
-		if(signalTimeList == null){
+	public void handleList(long start, long end) {
+		long delta = end - start;
+		Log.d("Signaltime", "Length : " + Long.toString(delta));
+		if (signalTimeList == null) {
 			signalTimeList = new LinkedList<Long>();
-			signalTimeList.add(start);
-			buff = ByteBuffer.allocate(8).putLong(start).array();
-			
 		}
-		signalTimeList.add(end);
-		
-	/*	try
-	//	{
-		//	streamToFlashDecoder.write(buff);
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		*/
+		signalTimeList.add(delta);
 	}
-	
-	
+
 	private boolean started = false;
-	private boolean signalLast = false; // state of the previous signal 
+	private boolean signalLast = false; // state of the previous signal
 	private long signalChangeTime;
-	
-	public void handleTick(boolean signal){
-		if(!started && signal){
+
+	public void handleTick(boolean signal) {
+		if (!started && signal) {
 			started = true;
 			signalLast = true;
 			signalChangeTime = System.currentTimeMillis();
 		}
-		
-		if((signalLast != signal) && started){
+
+		if ((signalLast != signal) && started) {
 			signalLast = signal;
 			long currentTime = System.currentTimeMillis();
 			handleList(signalChangeTime, currentTime);
 			signalChangeTime = currentTime;
 		}
-		
+
 	}
-	
-	
+
 	private PreviewCallback previewCb = new PreviewCallback() {
 
 		@Override
 		public void onPreviewFrame(byte[] data, Camera camera) {
-			
+
 			// Convert to JPG
-			Size previewSize = camera.getParameters().getPreviewSize(); 
-			YuvImage yuvimage=new YuvImage(data, ImageFormat.NV21, previewSize.width, previewSize.height, null);
+			Size previewSize = camera.getParameters().getPreviewSize();
+			YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21,
+					previewSize.width, previewSize.height, null);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width, previewSize.height), 80, baos);
+			yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width,
+					previewSize.height), 80, baos);
 			byte[] jdata = baos.toByteArray();
 
 			// Convert to Bitmap
-			Bitmap bitmap = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
-			
-			
+			Bitmap bitmap = BitmapFactory.decodeByteArray(jdata, 0,
+					jdata.length);
+
 			if (bitmap == null) {
 				Log.d(debugLabel, "No Picture decoded.");
 			} else {
