@@ -5,7 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="Capture">Take Picture!</string>
     <string name="button_text">Switch to Receivemode</string>
-    <string name="action_settings">freuency</string>
+    <string name="action_settings">frequency</string>
     <string name="permdesc_flashlight">Berechtigung das Blitzlicht zu nutzen</string>
     <string name="permlab_flashlight">Blitzlicht</string>
     <string name="flash_feature_not_available">Blitz kann nicht von der Anwendung genutzt werden</string>
