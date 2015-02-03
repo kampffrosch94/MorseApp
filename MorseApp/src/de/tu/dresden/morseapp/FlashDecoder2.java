@@ -2,21 +2,23 @@ package de.tu.dresden.morseapp;
 
 import java.util.List;
 
+import android.util.Log;
+
 // Same as FlashDecoder, but realizing the KISS-Principle
 public class FlashDecoder2 {
 
-	static final double tolerance = 2; // how many times bigger than the
+	static final double tolerance = 2.5; // how many times bigger than the
 										// smallest is still counted as dit
 
-	int ditlength;
+	long ditlength;
 
 	public FlashDecoder2() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public int calibrate(List<Integer> signals) {
-		int smallest = signals.get(0);
-		for (Integer signal : signals) {
+	public long calibrate(List<Long> signals) {
+		long smallest = signals.get(0);
+		for (Long signal : signals) {
 			if (smallest < signal) {
 				smallest = signal;
 			}
@@ -25,43 +27,49 @@ public class FlashDecoder2 {
 		return smallest;
 	}
 
-	public String decode(List<Integer> signals) {
+	public String decode(List<Long> signals) {
 		String result = "";
+		Log.i("MorseCode", "Signalcount: " + signals.size());
 		ditlength = calibrate(signals);
 		boolean light = true; // is light on or off
-		for (Integer signal : signals) {
+		long signal;
+		for (int i = 0; i < signals.size(); i++) {
+			signal = signals.get(i);
 			if (light) {
 				if (isDit(signal)) {
-					result += '.';
+					result += ".";
+					Log.i("MorseCode", "added dit");
 				} else if(isDat(signal)){
-					result += '-';
+					result += "-";
+					Log.i("MorseCode", "added dat");
 				}
-
+				light = false;
 			} else { //light is off
 				if(isPause(signal))
-					result += '/';
+					result += "/";
+				light = true;
 			}
-			light = !light;
+			
 		}
 		return result;
-
 	}
+	
 
-	public boolean isDit(int signal) {
+	public boolean isDit(long signal) {
 		if (signal >= ditlength && signal <= tolerance * ditlength)
 			return true;
 		else
 			return false;
 	}
 
-	public boolean isDat(int signal) {
+	public boolean isDat(long signal) {
 		if (signal > tolerance * ditlength)
 			return true;
 		else
 			return false;
 	}
 
-	public boolean isPause(int signal) { //pause between words
+	public boolean isPause(long signal) { //pause between words
 		if (signal > 2 * tolerance * ditlength)
 			return true;
 		else

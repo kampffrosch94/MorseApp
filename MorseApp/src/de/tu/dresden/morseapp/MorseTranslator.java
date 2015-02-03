@@ -2,6 +2,8 @@ package de.tu.dresden.morseapp;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.util.Log;
+
 /**
  * Created by simeon on 24.01.15.
  */
@@ -222,6 +224,11 @@ public class MorseTranslator {
         Node current_point = root;
         for(int i = 0; i < imputList.size(); ++i){
             current_point = root;
+            
+            if(imputList.get(i).length() > 1)
+            	Log.d("morseToString", "Part is too long: '"+ imputList.get(i) +"'");
+            
+            
             if(imputList.get(i).equals("/"))
             {
                 result += " ";
@@ -268,5 +275,15 @@ public class MorseTranslator {
 
 
         return result;
+    }
+    
+    
+    //wrapper for the other morseToString
+    public String morseToString(String input){
+    	LinkedList<String> wrapper = new LinkedList<String>();
+    	for(int i = 0; i < input.length(); i++){
+    		wrapper.add("" + input.charAt(i));
+    	}    	
+    	return morseToString(wrapper);
     }
 }

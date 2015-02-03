@@ -39,7 +39,8 @@ public class ReceiveActivity extends Activity {
 	private CameraHandlerThread mThread = null;
 	private Handler activityHandler;
 	LinkedList<Long> signalTimeList = null;
-	// OutputStream streamToFlashDecoder = null;
+	FlashDecoder2 flashdecoder;
+	MorseTranslator morsetranslator;
 
 	private static final String debugLabel = "MorseReceiverDebug";
 
@@ -48,9 +49,27 @@ public class ReceiveActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		activityHandler = new Handler();
 		setContentView(R.layout.activity_receive);
+		
+		morsetranslator = MorseTranslator.getInstance();
+		flashdecoder = new FlashDecoder2();
+		
+		//Test
+		LinkedList<Long> testlist = new LinkedList<Long>();
+		testlist.add((long)500);
+		testlist.add((long)500);
+		testlist.add((long)500);
+		testlist.add((long)500);
+		testlist.add((long)1500);
+		testlist.add((long)500);
+		flashdecoder.decode(testlist);
+		Log.i("MorseCode", "End of test.");
+		
+		//End Test
+		
+		
 		pic = (ImageView) findViewById(R.id.imageView1);
 		openCamera();
-
+		
 		Camera.Parameters para = cameraObject.getParameters();
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
 
@@ -228,6 +247,10 @@ public class ReceiveActivity extends Activity {
 			signalTimeList = new LinkedList<Long>();
 		}
 		signalTimeList.add(delta);
+		
+		String morsecode = flashdecoder.decode(signalTimeList);
+		Log.i("MorseCode", morsecode);
+		Log.i("MorseResult", morsetranslator.morseToString(morsecode));
 	}
 
 	private boolean started = false;
