@@ -53,10 +53,10 @@ public class FlashDecoder2 {
 				if (isPause(signal)) {
 					result.append(" / ");
 				}
-				light = true;
 				if(isDat(signal)){
 					result.append(" ");
 				}
+				light = true;
 			}
 
 		}
