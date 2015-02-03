@@ -79,7 +79,6 @@ public class ReceiveActivity extends Activity {
 			Log.d("CameraSettings", "Available resolution: " + size.width + " "
 					+ size.height);
 		}
-		cameraObject.setParameters(para);
 
 		List<Integer> rates = para.getSupportedPreviewFrameRates();
 
@@ -96,6 +95,8 @@ public class ReceiveActivity extends Activity {
 			para.setPreviewFrameRate(10);
 			Log.d("CameraSettings", "Set framerate: 10 per second");
 		}
+
+		cameraObject.setParameters(para);
 
 		cameraObject.setPreviewCallback(previewCb);
 
