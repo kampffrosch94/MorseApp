@@ -72,7 +72,7 @@ public class ReceiveActivity extends Activity {
 
 		Camera.Parameters para = cameraObject.getParameters();
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
-		para.setAutoExposureLock(false);
+		para.setAutoExposureLock(true);
 
 		List<Size> sizes = para.getSupportedPreviewSizes();
 		for (Size size : sizes) {
