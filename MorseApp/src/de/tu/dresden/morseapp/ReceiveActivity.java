@@ -38,10 +38,13 @@ public class ReceiveActivity extends Activity {
 	private ImageView pic;
 	private CameraHandlerThread mThread = null;
 	private Handler activityHandler;
+	private int baseLineWhiteCount = 0;
 	LinkedList<Long> signalTimeList = null;
 	FlashDecoder2 flashdecoder;
 	MorseTranslator morsetranslator;
-
+	private boolean firstPic = true;
+	private int ScreenX;
+	private int ScreenY;
 	private static final String debugLabel = "MorseReceiverDebug";
 
 	@Override
@@ -106,7 +109,11 @@ public class ReceiveActivity extends Activity {
 		Log.d("CameraSettings", "Set framerate: "+ minrate+ " per second");
 
 		Size size = sizes.get(sizes.size() - 1);
-		para.setPreviewSize(size.width, size.height);
+		
+		ScreenX = size.width;
+		ScreenY = size.height;
+		
+		para.setPreviewSize(ScreenX, ScreenY);
 		Log.d("CameraSettings", "Set resolution: " + size.width + " "
 				+ size.height);
 
@@ -117,6 +124,8 @@ public class ReceiveActivity extends Activity {
 		showCamera = new ShowCamera(this, cameraObject);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(showCamera);
+		firstPic = true;
+		
 	}
 
 	@Override
@@ -142,24 +151,42 @@ public class ReceiveActivity extends Activity {
 	}
 
 	public boolean hasSignal(Bitmap bitmap) {
-		int whitecount = 0;
-		int pixel;
-		for (int x = 0; x < bitmap.getWidth(); x++) {
-			for (int y = 0; y < bitmap.getHeight(); y++) {
-				pixel = bitmap.getPixel(x, y);
-				if ((Color.green(pixel) > 240) && (Color.red(pixel) > 240)
-						&& (Color.blue(pixel) > 240)) {
-					whitecount++;
+		if(firstPic)
+		{
+			baseLineWhiteCount = 0;
+			int pixel = 0;
+			for (int x = 0; x < bitmap.getWidth(); x++) {
+				for (int y = 0; y < bitmap.getHeight(); y++) {
+					pixel = bitmap.getPixel(x, y);
+					if ((Color.green(pixel) > 240) && (Color.red(pixel) > 240)
+							&& (Color.blue(pixel) > 240)) {
+						baseLineWhiteCount++;
+					}
 				}
 			}
+			firstPic = false;
 		}
+		else
+		{
+			int whitecount = 0;
+			int pixel;
+			for (int x = 0; x < bitmap.getWidth(); x++) {
+				for (int y = 0; y < bitmap.getHeight(); y++) {
+					pixel = bitmap.getPixel(x, y);
+					if ((Color.green(pixel) > 240) && (Color.red(pixel) > 240)
+							&& (Color.blue(pixel) > 240)) {
+						whitecount++;
+					}
+				}
+			}
 
-		if (whitecount > 300) {
-			return true;
+			if (whitecount > baseLineWhiteCount + ScreenX * ScreenY * 0.1) {
+				return true;
+			}
+
+			return false;
 		}
-
 		return false;
-
 	}
 
 	public Bitmap toGrayscale(Bitmap bmpOriginal) {
@@ -304,7 +331,7 @@ public class ReceiveActivity extends Activity {
 
 			if (bitmap == null) {
 				Log.d(debugLabel, "No Picture decoded.");
-			} else {
+			} else {				
 				bitmap = toGrayscale(bitmap);
 				handleTick(hasSignal(bitmap));
 				Log.d(debugLabel, "Picture decoded.");
