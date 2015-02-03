@@ -81,20 +81,22 @@ public class ReceiveActivity extends Activity {
 		}
 
 		List<Integer> rates = para.getSupportedPreviewFrameRates();
-
+		
+		int minrate = 900;
 		for (Integer rate : rates) {
 			Log.d("CameraSettings", "Available framerate: " + rate.toString());
+			if(rate >= 10 && rate < minrate){
+				minrate = rate;
+			}
 		}
+		
+		para.setPreviewFrameRate(minrate);
+		Log.d("CameraSettings", "Set framerate: "+ minrate+ " per second");
 
 		Size size = sizes.get(sizes.size() - 1);
 		para.setPreviewSize(size.width, size.height);
 		Log.d("CameraSettings", "Set resolution: " + size.width + " "
 				+ size.height);
-
-		if (sizes.contains(10)) {
-			para.setPreviewFrameRate(10);
-			Log.d("CameraSettings", "Set framerate: 10 per second");
-		}
 
 		cameraObject.setParameters(para);
 
