@@ -68,8 +68,14 @@ public class ReceiveActivity extends Activity {
 		// End Test
 
 		pic = (ImageView) findViewById(R.id.imageView1);
-		openCamera();
+		
+		
+	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		openCamera();
 		Camera.Parameters para = cameraObject.getParameters();
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
 		para.setAutoExposureLock(true);
@@ -106,15 +112,9 @@ public class ReceiveActivity extends Activity {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-	}
-
-	@Override
 	protected void onPause() {
 		super.onPause();
 		cameraObject.stopPreview();
-		mThread.suspend();
 		cameraObject.release();
 	}
 
