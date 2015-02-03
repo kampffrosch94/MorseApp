@@ -281,9 +281,10 @@ public class MorseTranslator {
     //wrapper for the other morseToString
     public String morseToString(String input){
     	LinkedList<String> wrapper = new LinkedList<String>();
-    	for(int i = 0; i < input.length(); i++){
-    		wrapper.add("" + input.charAt(i));
-    	}    	
+    	for(String s : input.split(" "))
+    	{
+    		wrapper.add(s);
+    	}
     	return morseToString(wrapper);
     }
 }

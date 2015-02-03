@@ -51,9 +51,12 @@ public class FlashDecoder2 {
 				light = false;
 			} else { // light is off
 				if (isPause(signal)) {
-					result.append("/");
+					result.append(" / ");
 				}
 				light = true;
+				if(isDat(signal)){
+					result.append(" ");
+				}
 			}
 
 		}
