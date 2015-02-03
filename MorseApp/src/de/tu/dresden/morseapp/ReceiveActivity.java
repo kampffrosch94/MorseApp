@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -25,6 +26,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -46,13 +48,14 @@ public class ReceiveActivity extends Activity {
 	private int ScreenX;
 	private int ScreenY;
 	private static final String debugLabel = "MorseReceiverDebug";
+	EditText inputField;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		activityHandler = new Handler();
 		setContentView(R.layout.activity_receive);
-
+		inputField = (EditText) findViewById(R.id.string_field);
 		morsetranslator = MorseTranslator.getInstance();
 		flashdecoder = new FlashDecoder2();
 
@@ -277,6 +280,16 @@ public class ReceiveActivity extends Activity {
 			cameraObject.startPreview();
 		}
 	};
+	
+	private void handleText(final String text) {
+		activityHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				inputField.setText(text);
+			}
+		});
+	}
+	
 
 	public void handleList(long start, long end) {
 		long delta = end - start;
@@ -288,7 +301,11 @@ public class ReceiveActivity extends Activity {
 
 		String morsecode = flashdecoder.decode(signalTimeList);
 		Log.i("MorseCode", morsecode);
-		Log.i("MorseResult", morsetranslator.morseToString(morsecode));
+		String text = morsetranslator.morseToString(morsecode);
+		Log.i("MorseResult", text);
+		if(text != null)
+			handleText(text);
+		
 	}
 
 	private boolean started = false;
