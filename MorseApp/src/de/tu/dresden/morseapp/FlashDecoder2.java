@@ -52,9 +52,11 @@ public class FlashDecoder2 {
 			} else { // light is off
 				if (isPause(signal)) {
 					result.append(" / ");
+					Log.i("MorseCode", "added end of word");
 				}
-				if(isDat(signal)){
+				else if(isDat(signal)){
 					result.append(" ");
+					Log.i("MorseCode", "added pause between latin chars");
 				}
 				light = true;
 			}

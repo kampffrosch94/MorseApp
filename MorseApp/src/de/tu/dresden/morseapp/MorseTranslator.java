@@ -127,7 +127,7 @@ public class MorseTranslator {
         root.getPoint().getLine().getLine().getPoint().setLine(new Node(null));
         root.getPoint().getLine().getLine().getPoint().getLine().setPoint(new Node("@"));
         root.getLine().getPoint().getPoint().getLine().setPoint(new Node("/"));
-
+        root.getLine().getPoint().getLine().getPoint().getLine().setLine(new Node("!"));
     }
 
     private String parseStringToMorse(char imput)
@@ -190,6 +190,7 @@ public class MorseTranslator {
             case '+': return ".-.-.";
             case '/': return "-..-.";
             case '@': return ".--.-.";
+            case '!': return "-.-.--";
 
             default: return "..--..";
         }
