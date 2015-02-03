@@ -116,6 +116,7 @@ public class MorseTranslator {
         root.getLine().getLine().getLine().getPoint().getPoint().setPoint(new Node(":"));
         root.getLine().getPoint().getLine().getPoint().setLine(new Node(null));
         root.getLine().getPoint().getLine().getPoint().getLine().setPoint(new Node(";"));
+        root.getLine().getPoint().getLine().getPoint().getLine().setLine(new Node("!"));
         root.getPoint().getPoint().getLine().getLine().setPoint(new Node(null));
         root.getPoint().getPoint().getLine().getLine().getPoint().setPoint(new Node("?"));
         root.getPoint().getPoint().getLine().getLine().getPoint().setLine(new Node("_"));
@@ -127,7 +128,7 @@ public class MorseTranslator {
         root.getPoint().getLine().getLine().getPoint().setLine(new Node(null));
         root.getPoint().getLine().getLine().getPoint().getLine().setPoint(new Node("@"));
         root.getLine().getPoint().getPoint().getLine().setPoint(new Node("/"));
-        root.getLine().getPoint().getLine().getPoint().getLine().setLine(new Node("!"));
+
     }
 
     private String parseStringToMorse(char imput)
@@ -180,6 +181,7 @@ public class MorseTranslator {
             case ',': return "--..--";
             case ':': return "---...";
             case ';': return "-.-.-.";
+            case '!': return "-.-.--";
             case '?': return "..--..";
             case '-': return "-....-";
             case '_': return "..--.-";
@@ -190,7 +192,6 @@ public class MorseTranslator {
             case '+': return ".-.-.";
             case '/': return "-..-.";
             case '@': return ".--.-.";
-            case '!': return "-.-.--";
 
             default: return "..--..";
         }

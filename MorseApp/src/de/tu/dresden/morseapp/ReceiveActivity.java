@@ -78,8 +78,14 @@ public class ReceiveActivity extends Activity {
 		openCamera();
 		Camera.Parameters para = cameraObject.getParameters();
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
-		para.setAutoExposureLock(true);
-
+		
+		if(para.isAutoExposureLockSupported())
+			para.setAutoExposureLock(true);
+		else
+		{
+			Log.e("ERROR", "Auto exposure lock not supported on device");
+		}
+		
 		List<Size> sizes = para.getSupportedPreviewSizes();
 		for (Size size : sizes) {
 			Log.d("CameraSettings", "Available resolution: " + size.width + " "
