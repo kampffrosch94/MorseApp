@@ -49,27 +49,27 @@ public class ReceiveActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		activityHandler = new Handler();
 		setContentView(R.layout.activity_receive);
-		
+
 		morsetranslator = MorseTranslator.getInstance();
 		flashdecoder = new FlashDecoder2();
-		
-		//Test
+
+		// Test
 		LinkedList<Long> testlist = new LinkedList<Long>();
-		testlist.add((long)500);
-		testlist.add((long)500);
-		testlist.add((long)500);
-		testlist.add((long)500);
-		testlist.add((long)1500);
-		testlist.add((long)500);
-		flashdecoder.decode(testlist);
+		testlist.add((long) 500); // dit
+		testlist.add((long) 500);
+		testlist.add((long) 500); // dit
+		testlist.add((long) 3500); // dat
+		testlist.add((long) 1500); // pause
+		testlist.add((long) 500); // dit
+		String result = flashdecoder.decode(testlist);
+		Log.i("MorseCode", result);
 		Log.i("MorseCode", "End of test.");
-		
-		//End Test
-		
-		
+
+		// End Test
+
 		pic = (ImageView) findViewById(R.id.imageView1);
 		openCamera();
-		
+
 		Camera.Parameters para = cameraObject.getParameters();
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
 
@@ -111,6 +111,7 @@ public class ReceiveActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		cameraObject.stopPreview();
 		mThread.suspend();
 		cameraObject.release();
 	}
@@ -247,7 +248,7 @@ public class ReceiveActivity extends Activity {
 			signalTimeList = new LinkedList<Long>();
 		}
 		signalTimeList.add(delta);
-		
+
 		String morsecode = flashdecoder.decode(signalTimeList);
 		Log.i("MorseCode", morsecode);
 		Log.i("MorseResult", morsetranslator.morseToString(morsecode));

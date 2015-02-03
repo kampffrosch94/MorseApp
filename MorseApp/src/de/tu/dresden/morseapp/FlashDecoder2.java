@@ -8,7 +8,7 @@ import android.util.Log;
 public class FlashDecoder2 {
 
 	static final double tolerance = 2.5; // how many times bigger than the
-										// smallest is still counted as dit
+											// smallest is still counted as dit
 
 	long ditlength;
 
@@ -18,17 +18,21 @@ public class FlashDecoder2 {
 
 	public long calibrate(List<Long> signals) {
 		long smallest = signals.get(0);
-		for (Long signal : signals) {
-			if (smallest < signal) {
+		long signal;
+		for (int i = 0; i < signals.size(); i++) {
+			signal = signals.get(i);
+			if (smallest > signal) {
 				smallest = signal;
 			}
 		}
+		
+		Log.i("MorseCode", "minimum dit length: " + smallest);
 
 		return smallest;
 	}
 
 	public String decode(List<Long> signals) {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		Log.i("MorseCode", "Signalcount: " + signals.size());
 		ditlength = calibrate(signals);
 		boolean light = true; // is light on or off
@@ -37,23 +41,24 @@ public class FlashDecoder2 {
 			signal = signals.get(i);
 			if (light) {
 				if (isDit(signal)) {
-					result += ".";
+					result.append(".");
 					Log.i("MorseCode", "added dit");
-				} else if(isDat(signal)){
-					result += "-";
+				}
+				if (isDat(signal)) {
+					result.append("-");
 					Log.i("MorseCode", "added dat");
 				}
 				light = false;
-			} else { //light is off
-				if(isPause(signal))
-					result += "/";
+			} else { // light is off
+				if (isPause(signal)) {
+					result.append("/");
+				}
 				light = true;
 			}
-			
+
 		}
-		return result;
+		return result.toString();
 	}
-	
 
 	public boolean isDit(long signal) {
 		if (signal >= ditlength && signal <= tolerance * ditlength)
@@ -69,7 +74,7 @@ public class FlashDecoder2 {
 			return false;
 	}
 
-	public boolean isPause(long signal) { //pause between words
+	public boolean isPause(long signal) { // pause between words
 		if (signal > 2 * tolerance * ditlength)
 			return true;
 		else
